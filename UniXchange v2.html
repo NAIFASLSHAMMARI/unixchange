@@ -1,0 +1,2030 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UniXchange - University Skills Exchange</title>
+    <style>
+/* Reset and Base Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --primary-color: #6366f1;
+    --primary-dark: #4f46e5;
+    --primary-light: #818cf8;
+    --secondary-color: #ec4899;
+    --text-primary: #1f2937;
+    --text-secondary: #6b7280;
+    --background: #ffffff;
+    --background-light: #f9fafb;
+    --border-color: #e5e7eb;
+    --success: #10b981;
+    --warning: #f59e0b;
+    --error: #ef4444;
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+    --radius: 12px;
+    --radius-lg: 16px;
+}
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    color: var(--text-primary);
+    line-height: 1.6;
+    background: var(--background);
+    transition: direction 0.3s ease;
+}
+
+/* RTL Support */
+body.rtl {
+    direction: rtl;
+    font-family: 'Segoe UI', 'Tahoma', 'Arial', sans-serif;
+}
+
+body.rtl .hero-buttons,
+body.rtl .form-row,
+body.rtl .search-bar,
+body.rtl .filter-tags,
+body.rtl .skill-tags,
+body.rtl .skill-card-footer,
+body.rtl .form-options,
+body.rtl .badges {
+    flex-direction: row-reverse;
+}
+
+body.rtl .nav-links {
+    flex-direction: row-reverse;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+/* SPA Page Routing — show one page at a time */
+.page { display: none; }
+.page.active { display: block; }
+
+/* Navigation */
+.navbar {
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--border-color);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    padding: 1rem 0;
+}
+
+.nav-wrapper {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo h1 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.logo a {
+    text-decoration: none;
+}
+
+.logo span {
+    color: var(--primary-color);
+}
+
+.nav-links {
+    display: flex;
+    list-style: none;
+    align-items: center;
+    gap: 2rem;
+}
+
+.nav-links a {
+    text-decoration: none;
+    color: var(--text-secondary);
+    font-weight: 500;
+    transition: color 0.3s;
+    cursor: pointer;
+}
+
+.nav-links a:hover {
+    color: var(--primary-color);
+}
+
+.nav-links a.active {
+    color: var(--primary-color);
+}
+
+.hamburger {
+    display: none;
+    flex-direction: column;
+    gap: 4px;
+    cursor: pointer;
+}
+
+.hamburger span {
+    width: 25px;
+    height: 3px;
+    background: var(--text-primary);
+    border-radius: 2px;
+    transition: all 0.3s;
+}
+
+/* Language Toggle */
+.language-toggle {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    background: transparent;
+    border: 2px solid var(--border-color);
+    border-radius: var(--radius);
+    cursor: pointer;
+    transition: all 0.3s;
+    font-weight: 500;
+    color: var(--text-secondary);
+}
+
+.language-toggle:hover {
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+    background: rgba(99, 102, 241, 0.05);
+}
+
+.lang-icon {
+    font-size: 1.1rem;
+}
+
+/* Buttons */
+.btn-primary,
+.btn-secondary {
+    padding: 0.625rem 1.5rem;
+    border-radius: var(--radius);
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.3s;
+    border: none;
+    cursor: pointer;
+    font-size: 0.95rem;
+    display: inline-block;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+    color: white;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+}
+
+.btn-secondary {
+    background: transparent;
+    color: var(--primary-color);
+    border: 2px solid var(--primary-color);
+}
+
+.btn-secondary:hover {
+    background: var(--primary-color);
+    color: white;
+}
+
+.btn-large {
+    padding: 0.875rem 2rem;
+    font-size: 1.1rem;
+}
+
+.btn-full {
+    width: 100%;
+    padding: 1rem;
+}
+
+/* Hero Section */
+.hero {
+    padding: 6rem 0 4rem;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    position: relative;
+    overflow: hidden;
+}
+
+.hero::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="2" fill="rgba(255,255,255,0.1)"/></svg>');
+    opacity: 0.3;
+}
+
+.hero .container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    align-items: center;
+    position: relative;
+    z-index: 1;
+}
+
+.hero-title {
+    font-size: 3.5rem;
+    font-weight: 800;
+    margin-bottom: 1rem;
+    line-height: 1.1;
+}
+
+.hero-subtitle {
+    font-size: 1.25rem;
+    margin-bottom: 2rem;
+    opacity: 0.95;
+}
+
+.hero-buttons {
+    display: flex;
+    gap: 1rem;
+}
+
+.hero-image {
+    position: relative;
+    height: 400px;
+}
+
+.floating-card {
+    position: absolute;
+    background: rgba(255, 255, 255, 0.95);
+    padding: 1rem 1.5rem;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-xl);
+    animation: float 3s ease-in-out infinite;
+}
+
+.floating-card.card-1 {
+    top: 20%;
+    left: 10%;
+    animation-delay: 0s;
+}
+
+.floating-card.card-2 {
+    top: 50%;
+    right: 15%;
+    animation-delay: 1s;
+}
+
+.floating-card.card-3 {
+    bottom: 20%;
+    left: 25%;
+    animation-delay: 2s;
+}
+
+.skill-tag {
+    color: var(--primary-color);
+    font-weight: 600;
+    font-size: 0.95rem;
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50%      { transform: translateY(-20px); }
+}
+
+/* Features Section */
+.features {
+    padding: 5rem 0;
+    background: var(--background-light);
+}
+
+.section-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 3rem;
+}
+
+.features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
+}
+
+.feature-card {
+    background: white;
+    padding: 2rem;
+    border-radius: var(--radius-lg);
+    text-align: center;
+    transition: transform 0.3s, box-shadow 0.3s;
+    border: 1px solid var(--border-color);
+}
+
+.feature-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-xl);
+}
+
+.feature-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+}
+
+.feature-card h3 {
+    font-size: 1.25rem;
+    margin-bottom: 0.75rem;
+    color: var(--text-primary);
+}
+
+.feature-card p {
+    color: var(--text-secondary);
+}
+
+/* How It Works Section */
+.how-it-works {
+    padding: 5rem 0;
+}
+
+.steps {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 3rem;
+    margin-top: 3rem;
+}
+
+.step {
+    text-align: center;
+    position: relative;
+}
+
+.step-number {
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin: 0 auto 1.5rem;
+}
+
+.step h3 {
+    font-size: 1.5rem;
+    margin-bottom: 0.75rem;
+}
+
+.step p {
+    color: var(--text-secondary);
+    max-width: 300px;
+    margin: 0 auto;
+}
+
+/* CTA Section */
+.cta {
+    padding: 5rem 0;
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    color: white;
+    text-align: center;
+}
+
+.cta h2 {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+}
+
+.cta p {
+    font-size: 1.25rem;
+    margin-bottom: 2rem;
+    opacity: 0.95;
+}
+
+.cta .btn-primary {
+    background: white;
+    color: var(--primary-color);
+}
+
+/* Footer */
+.footer {
+    background: var(--text-primary);
+    color: white;
+    padding: 3rem 0 1.5rem;
+}
+
+.footer-content {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 2rem;
+    margin-bottom: 2rem;
+}
+
+.footer-section h3,
+.footer-section h4 {
+    margin-bottom: 1rem;
+}
+
+.footer-section ul {
+    list-style: none;
+}
+
+.footer-section ul li {
+    margin-bottom: 0.5rem;
+}
+
+.footer-section a {
+    color: rgba(255, 255, 255, 0.8);
+    text-decoration: none;
+    transition: color 0.3s;
+    cursor: pointer;
+}
+
+.footer-section a:hover {
+    color: white;
+}
+
+.footer-bottom {
+    text-align: center;
+    padding-top: 2rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    color: rgba(255, 255, 255, 0.6);
+}
+
+/* Auth Pages */
+.auth-section {
+    min-height: calc(100vh - 80px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 2rem 0;
+}
+
+.auth-container {
+    width: 100%;
+    max-width: 480px;
+    padding: 0 20px;
+}
+
+.auth-card {
+    background: white;
+    border-radius: var(--radius-lg);
+    padding: 3rem;
+    box-shadow: var(--shadow-xl);
+}
+
+.auth-card h2 {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+    text-align: center;
+}
+
+.auth-subtitle {
+    text-align: center;
+    color: var(--text-secondary);
+    margin-bottom: 2rem;
+}
+
+.auth-form {
+    margin-bottom: 1.5rem;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.form-group input {
+    width: 100%;
+    padding: 0.875rem;
+    border: 2px solid var(--border-color);
+    border-radius: var(--radius);
+    font-size: 1rem;
+    color: var(--text-primary);
+    background: white;
+    transition: border-color 0.3s;
+}
+
+.form-group input::placeholder {
+    color: #9ca3af;
+}
+
+.form-group input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+}
+
+/* Stronger contrast for auth labels (purple gradient bg behind the white card) */
+.auth-card .form-group label {
+    color: #111827;
+    font-weight: 700;
+}
+
+.auth-card .form-group input {
+    border-color: #d1d5db;
+}
+
+.auth-card .auth-subtitle {
+    color: #4b5563;
+}
+
+/* ── Password field with show/hide eye toggle ── */
+.password-wrapper {
+    position: relative;
+}
+.password-wrapper input {
+    padding-right: 3rem !important;
+}
+body.rtl .password-wrapper input {
+    padding-right: 0.875rem !important;
+    padding-left: 3rem !important;
+}
+.password-toggle {
+    position: absolute;
+    top: 50%;
+    right: 0.75rem;
+    transform: translateY(-50%);
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    font-size: 1.2rem;
+    color: #6b7280;
+    padding: 0.25rem;
+    line-height: 1;
+    user-select: none;
+}
+body.rtl .password-toggle {
+    right: auto;
+    left: 0.75rem;
+}
+.password-toggle:hover { color: var(--primary-color); }
+
+.form-options {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    cursor: pointer;
+}
+
+.checkbox-label input[type="checkbox"] {
+    width: auto;
+}
+
+.terms-label {
+    margin-bottom: 1.5rem;
+}
+
+.forgot-password {
+    color: var(--primary-color);
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.forgot-password:hover {
+    text-decoration: underline;
+}
+
+.auth-divider {
+    position: relative;
+    text-align: center;
+    margin: 1.5rem 0;
+}
+
+.auth-divider::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: var(--border-color);
+}
+
+.auth-divider span {
+    background: white;
+    padding: 0 1rem;
+    color: var(--text-secondary);
+    position: relative;
+    font-size: 0.9rem;
+}
+
+.btn-social {
+    width: 100%;
+    padding: 0.875rem;
+    border: 2px solid var(--border-color);
+    background: white;
+    border-radius: var(--radius);
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    transition: all 0.3s;
+    margin-bottom: 1rem;
+}
+
+.btn-social:hover {
+    background: var(--background-light);
+    border-color: var(--text-secondary);
+}
+
+.auth-footer {
+    text-align: center;
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+}
+
+.auth-footer a {
+    color: var(--primary-color);
+    text-decoration: none;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.auth-footer a:hover {
+    text-decoration: underline;
+}
+
+/* Dashboard */
+.dashboard {
+    padding: 2rem 0 4rem;
+    background: var(--background-light);
+    min-height: calc(100vh - 80px);
+}
+
+.dashboard-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    padding: 2rem;
+    background: white;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow);
+}
+
+.dashboard-header h1 {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+}
+
+.dashboard-header p {
+    color: var(--text-secondary);
+}
+
+.search-section {
+    background: white;
+    padding: 2rem;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow);
+    margin-bottom: 2rem;
+}
+
+.search-bar {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.search-bar input {
+    flex: 1;
+    padding: 0.875rem 1.25rem;
+    border: 2px solid var(--border-color);
+    border-radius: var(--radius);
+    font-size: 1rem;
+}
+
+.search-bar input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+}
+
+.filter-tags {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+}
+
+.filter-tag {
+    padding: 0.5rem 1.25rem;
+    border: 2px solid var(--border-color);
+    background: white;
+    border-radius: var(--radius);
+    cursor: pointer;
+    transition: all 0.3s;
+    font-weight: 500;
+}
+
+.filter-tag:hover {
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+}
+
+.filter-tag.active {
+    background: var(--primary-color);
+    color: white;
+    border-color: var(--primary-color);
+}
+
+.skills-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 1.5rem;
+}
+
+.skill-card {
+    background: white;
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+    box-shadow: var(--shadow);
+    transition: transform 0.3s, box-shadow 0.3s;
+    border: 1px solid var(--border-color);
+}
+
+.skill-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-xl);
+}
+
+.skill-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 1rem;
+}
+
+.user-info {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+}
+
+.avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 0.9rem;
+}
+
+.user-info h3 {
+    font-size: 1.1rem;
+    margin-bottom: 0.25rem;
+}
+
+.university {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+}
+
+.badges {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    align-items: flex-end;
+}
+
+.status-badge {
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.status-badge.available {
+    background: rgba(16, 185, 129, 0.1);
+    color: var(--success);
+}
+
+.status-badge.busy {
+    background: rgba(245, 158, 11, 0.1);
+    color: var(--warning);
+}
+
+.price-badge {
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.price-badge.free {
+    background: rgba(99, 102, 241, 0.1);
+    color: var(--primary-color);
+}
+
+.price-badge.paid {
+    background: rgba(236, 72, 153, 0.1);
+    color: var(--secondary-color);
+}
+
+.skill-card-body h4 {
+    font-size: 1.15rem;
+    margin-bottom: 0.75rem;
+    color: var(--text-primary);
+}
+
+.skill-card-body p {
+    color: var(--text-secondary);
+    margin-bottom: 1rem;
+    font-size: 0.95rem;
+}
+
+.skill-tags {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin-bottom: 1rem;
+}
+
+.tag {
+    padding: 0.25rem 0.75rem;
+    background: var(--background-light);
+    border-radius: 20px;
+    font-size: 0.8rem;
+    color: var(--primary-color);
+    font-weight: 500;
+}
+
+.skill-card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border-color);
+}
+
+.seeking {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+
+.user-profile {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.navbar-dashboard .avatar {
+    width: 32px;
+    height: 32px;
+    font-size: 0.75rem;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .hamburger { display: flex; }
+    .nav-links {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: white;
+        flex-direction: column;
+        padding: 2rem;
+        box-shadow: var(--shadow-lg);
+        display: none;
+        gap: 1rem;
+    }
+    .nav-links.active { display: flex; }
+    .hero .container { grid-template-columns: 1fr; }
+    .hero-title { font-size: 2.5rem; }
+    .hero-image { display: none; }
+    .features-grid, .steps { grid-template-columns: 1fr; }
+    .skills-grid { grid-template-columns: 1fr; }
+    .dashboard-header { flex-direction: column; gap: 1rem; align-items: flex-start; }
+    .search-bar { flex-direction: column; }
+    .form-row { grid-template-columns: 1fr; }
+    .auth-card { padding: 2rem; }
+}
+
+@media (max-width: 480px) {
+    .hero-title { font-size: 2rem; }
+    .hero-subtitle { font-size: 1rem; }
+    .section-title { font-size: 2rem; }
+    .skill-card-footer { flex-direction: column; gap: 1rem; align-items: flex-start; }
+    .skill-card-footer .btn-primary { width: 100%; }
+}
+    </style>
+</head>
+<body>
+
+<!-- ════════════════════════════════════════════
+     PAGE: HOME (landing)
+     hash: #home  (or empty)
+═════════════════════════════════════════════ -->
+<div class="page page-home" data-page="home">
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-wrapper">
+                <div class="logo">
+                    <a href="#home"><h1>Uni<span>Xchange</span></h1></a>
+                </div>
+                <ul class="nav-links">
+                    <li><a href="#features-section" data-en="Features" data-ar="المميزات">Features</a></li>
+                    <li><a href="#how-it-works-section" data-en="How It Works" data-ar="كيف يعمل">How It Works</a></li>
+                    <li>
+                        <button class="language-toggle lang-toggle-btn">
+                            <span class="lang-icon">🌐</span>
+                            <span data-en="العربية" data-ar="English">العربية</span>
+                        </button>
+                    </li>
+                    <li><a href="#login" class="btn-secondary" data-en="Login" data-ar="تسجيل الدخول">Login</a></li>
+                    <li><a href="#signup" class="btn-primary" data-en="Sign Up" data-ar="إنشاء حساب">Sign Up</a></li>
+                </ul>
+                <div class="hamburger"><span></span><span></span><span></span></div>
+            </div>
+        </div>
+    </nav>
+
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <h1 class="hero-title" data-en="Exchange Skills, Grow Together" data-ar="تبادل المهارات، انموا معاً">Exchange Skills, Grow Together</h1>
+                <p class="hero-subtitle" data-en="Connect with university students worldwide. Teach what you know, learn what you don't." data-ar="تواصل مع طلاب الجامعات حول العالم. علّم ما تعرفه، تعلّم ما لا تعرفه.">Connect with university students worldwide. Teach what you know, learn what you don't.</p>
+                <div class="hero-buttons">
+                    <a href="#signup" class="btn-primary btn-large" data-en="Get Started Free" data-ar="ابدأ مجاناً">Get Started Free</a>
+                    <a href="#how-it-works-section" class="btn-secondary btn-large" data-en="Learn More" data-ar="اعرف المزيد">Learn More</a>
+                </div>
+            </div>
+            <div class="hero-image">
+                <div class="floating-card card-1"><span class="skill-tag">💻 Programming</span></div>
+                <div class="floating-card card-2"><span class="skill-tag">🎨 Design</span></div>
+                <div class="floating-card card-3"><span class="skill-tag">🌍 Languages</span></div>
+            </div>
+        </div>
+    </section>
+
+    <section id="features-section" class="features">
+        <div class="container">
+            <h2 class="section-title" data-en="Why UniXchange?" data-ar="لماذا UniXchange؟">Why UniXchange?</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">🎓</div>
+                    <h3 data-en="University Verified" data-ar="موثق جامعياً">University Verified</h3>
+                    <p data-en="Connect with verified students from top universities around the world." data-ar="تواصل مع طلاب موثقين من أفضل الجامعات حول العالم.">Connect with verified students from top universities around the world.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">💡</div>
+                    <h3 data-en="Skill Exchange" data-ar="تبادل المهارات">Skill Exchange</h3>
+                    <p data-en="Teach what you're great at and learn new skills from peers — free or paid." data-ar="علّم ما تتقنه وتعلّم مهارات جديدة من زملائك — مجاناً أو بمقابل.">Teach what you're great at and learn new skills from peers — free or paid.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🌐</div>
+                    <h3 data-en="Global Community" data-ar="مجتمع عالمي">Global Community</h3>
+                    <p data-en="Join thousands of students from over 100 universities worldwide." data-ar="انضم إلى آلاف الطلاب من أكثر من 100 جامعة حول العالم.">Join thousands of students from over 100 universities worldwide.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">⚡</div>
+                    <h3 data-en="Quick Match" data-ar="تطابق سريع">Quick Match</h3>
+                    <p data-en="Find the right exchange partner in minutes with our smart matching." data-ar="اعثر على شريك التبادل المناسب في دقائق بفضل المطابقة الذكية.">Find the right exchange partner in minutes with our smart matching.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="how-it-works-section" class="how-it-works">
+        <div class="container">
+            <h2 class="section-title" data-en="How It Works" data-ar="كيف يعمل">How It Works</h2>
+            <div class="steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <h3 data-en="Sign Up" data-ar="سجّل">Sign Up</h3>
+                    <p data-en="Create your account using your university email — it takes less than a minute." data-ar="أنشئ حسابك باستخدام بريدك الجامعي — يستغرق أقل من دقيقة.">Create your account using your university email — it takes less than a minute.</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <h3 data-en="Post Your Skills" data-ar="انشر مهاراتك">Post Your Skills</h3>
+                    <p data-en="Share what you can teach and what you'd like to learn from others." data-ar="شارك ما يمكنك تعليمه وما ترغب في تعلمه من الآخرين.">Share what you can teach and what you'd like to learn from others.</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <h3 data-en="Connect & Exchange" data-ar="تواصل وتبادل">Connect & Exchange</h3>
+                    <p data-en="Browse skills, send connection requests, and start your exchange journey." data-ar="تصفّح المهارات وأرسل طلبات التواصل وابدأ رحلة التبادل.">Browse skills, send connection requests, and start your exchange journey.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="cta">
+        <div class="container">
+            <h2 data-en="Ready to Start Exchanging?" data-ar="جاهز لبدء التبادل؟">Ready to Start Exchanging?</h2>
+            <p data-en="Join UniXchange today and unlock a world of learning opportunities." data-ar="انضم إلى UniXchange اليوم وافتح عالماً من فرص التعلم.">Join UniXchange today and unlock a world of learning opportunities.</p>
+            <a href="#signup" class="btn-primary btn-large" data-en="Create Free Account" data-ar="أنشئ حساباً مجانياً">Create Free Account</a>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Uni<span style="color:var(--primary-light);">Xchange</span></h3>
+                    <p style="color:rgba(255,255,255,0.7);" data-en="Connecting students. Sharing skills." data-ar="نربط الطلاب. نشارك المهارات.">Connecting students. Sharing skills.</p>
+                </div>
+                <div class="footer-section">
+                    <h4 data-en="Product" data-ar="المنتج">Product</h4>
+                    <ul>
+                        <li><a href="#features-section" data-en="Features" data-ar="المميزات">Features</a></li>
+                        <li><a href="#how-it-works-section" data-en="How It Works" data-ar="كيف يعمل">How It Works</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4 data-en="Account" data-ar="الحساب">Account</h4>
+                    <ul>
+                        <li><a href="#login" data-en="Login" data-ar="تسجيل الدخول">Login</a></li>
+                        <li><a href="#signup" data-en="Sign Up" data-ar="إنشاء حساب">Sign Up</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 UniXchange. <span data-en="All rights reserved." data-ar="جميع الحقوق محفوظة.">All rights reserved.</span></p>
+            </div>
+        </div>
+    </footer>
+</div>
+
+<!-- ════════════════════════════════════════════
+     PAGE: LOGIN
+     hash: #login
+═════════════════════════════════════════════ -->
+<div class="page page-login" data-page="login">
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-wrapper">
+                <div class="logo">
+                    <a href="#home"><h1>Uni<span>Xchange</span></h1></a>
+                </div>
+                <ul class="nav-links">
+                    <li><a href="#home" data-en="Home" data-ar="الرئيسية">Home</a></li>
+                    <li>
+                        <button class="language-toggle lang-toggle-btn">
+                            <span class="lang-icon">🌐</span>
+                            <span data-en="العربية" data-ar="English">العربية</span>
+                        </button>
+                    </li>
+                    <li><a href="#signup" class="btn-primary" data-en="Sign Up" data-ar="إنشاء حساب">Sign Up</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <section class="auth-section">
+        <div class="auth-container">
+            <div class="auth-card">
+                <h2 data-en="Welcome Back!" data-ar="مرحباً بعودتك!">Welcome Back!</h2>
+                <p class="auth-subtitle" data-en="Log in to continue exchanging skills" data-ar="سجل الدخول لمتابعة تبادل المهارات">Log in to continue exchanging skills</p>
+
+                <form id="loginForm" class="auth-form">
+                    <div class="form-group">
+                        <label for="loginEmail" data-en="University Email" data-ar="البريد الجامعي">University Email</label>
+                        <input type="email" id="loginEmail" name="email" placeholder="your.name@university.edu" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="loginPassword" data-en="Password" data-ar="كلمة المرور">Password</label>
+                        <div class="password-wrapper">
+                            <input type="password" id="loginPassword" name="password" data-placeholder-en="Enter your password" data-placeholder-ar="أدخل كلمة المرور" placeholder="Enter your password" required>
+                            <button type="button" class="password-toggle" data-target="loginPassword" aria-label="Show password">👁</button>
+                        </div>
+                    </div>
+                    <div class="form-options">
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="remember">
+                            <span data-en="Remember me" data-ar="تذكرني">Remember me</span>
+                        </label>
+                        <a href="#" class="forgot-password" data-en="Forgot password?" data-ar="نسيت كلمة المرور؟">Forgot password?</a>
+                    </div>
+                    <button type="submit" class="btn-primary btn-full" data-en="Log In" data-ar="تسجيل الدخول">Log In</button>
+                </form>
+
+                <div class="auth-divider"><span data-en="OR" data-ar="أو">OR</span></div>
+
+                <button class="btn-social btn-google">
+                    <svg width="18" height="18" viewBox="0 0 18 18">
+                        <path fill="#4285F4" d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.874 2.684-6.615z"/>
+                        <path fill="#34A853" d="M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332C2.438 15.983 5.482 18 9 18z"/>
+                        <path fill="#FBBC05" d="M3.964 10.71c-.18-.54-.282-1.117-.282-1.71s.102-1.17.282-1.71V4.958H.957C.347 6.173 0 7.548 0 9s.348 2.827.957 4.042l3.007-2.332z"/>
+                        <path fill="#EA4335" d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0 5.482 0 2.438 2.017.957 4.958L3.964 7.29C4.672 5.163 6.656 3.58 9 3.58z"/>
+                    </svg>
+                    <span data-en="Continue with Google" data-ar="المتابعة مع Google">Continue with Google</span>
+                </button>
+
+                <p class="auth-footer">
+                    <span data-en="Don't have an account?" data-ar="ليس لديك حساب؟">Don't have an account?</span> <a href="#signup" data-en="Sign up" data-ar="سجل الآن">Sign up</a>
+                </p>
+            </div>
+        </div>
+    </section>
+</div>
+
+<!-- ════════════════════════════════════════════
+     PAGE: SIGNUP
+     hash: #signup
+═════════════════════════════════════════════ -->
+<div class="page page-signup" data-page="signup">
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-wrapper">
+                <div class="logo">
+                    <a href="#home"><h1>Uni<span>Xchange</span></h1></a>
+                </div>
+                <ul class="nav-links">
+                    <li><a href="#home" data-en="Home" data-ar="الرئيسية">Home</a></li>
+                    <li>
+                        <button class="language-toggle lang-toggle-btn">
+                            <span class="lang-icon">🌐</span>
+                            <span data-en="العربية" data-ar="English">العربية</span>
+                        </button>
+                    </li>
+                    <li><a href="#login" class="btn-secondary" data-en="Login" data-ar="تسجيل الدخول">Login</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <section class="auth-section">
+        <div class="auth-container">
+            <div class="auth-card">
+                <h2 data-en="Join UniXchange" data-ar="انضم إلى UniXchange">Join UniXchange</h2>
+                <p class="auth-subtitle" data-en="Start exchanging skills with students worldwide" data-ar="ابدأ تبادل المهارات مع طلاب من حول العالم">Start exchanging skills with students worldwide</p>
+
+                <form id="signupForm" class="auth-form">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="firstName" data-en="First Name" data-ar="الاسم الأول">First Name</label>
+                            <input type="text" id="firstName" name="firstName" data-placeholder-en="John" data-placeholder-ar="أحمد" placeholder="John" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="lastName" data-en="Last Name" data-ar="اسم العائلة">Last Name</label>
+                            <input type="text" id="lastName" name="lastName" data-placeholder-en="Doe" data-placeholder-ar="محمد" placeholder="Doe" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="university" data-en="University" data-ar="الجامعة">University</label>
+                        <input type="text" id="university" name="university" data-placeholder-en="Your University Name" data-placeholder-ar="اسم جامعتك" placeholder="Your University Name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="signupEmail" data-en="University Email" data-ar="البريد الجامعي">University Email</label>
+                        <input type="email" id="signupEmail" name="email" placeholder="your.name@university.edu" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="signupPassword" data-en="Password" data-ar="كلمة المرور">Password</label>
+                        <div class="password-wrapper">
+                            <input type="password" id="signupPassword" name="password" data-placeholder-en="Create a strong password" data-placeholder-ar="أنشئ كلمة مرور قوية" placeholder="Create a strong password" required>
+                            <button type="button" class="password-toggle" data-target="signupPassword" aria-label="Show password">👁</button>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="confirmPassword" data-en="Confirm Password" data-ar="تأكيد كلمة المرور">Confirm Password</label>
+                        <div class="password-wrapper">
+                            <input type="password" id="confirmPassword" name="confirmPassword" data-placeholder-en="Re-enter your password" data-placeholder-ar="أعد إدخال كلمة المرور" placeholder="Re-enter your password" required>
+                            <button type="button" class="password-toggle" data-target="confirmPassword" aria-label="Show password">👁</button>
+                        </div>
+                    </div>
+                    <label class="checkbox-label terms-label">
+                        <input type="checkbox" name="terms" required>
+                        <span data-en="I agree to the" data-ar="أوافق على">I agree to the</span> <a href="#" data-en="Terms of Service" data-ar="شروط الخدمة">Terms of Service</a> <span data-en="and" data-ar="و">and</span> <a href="#" data-en="Privacy Policy" data-ar="سياسة الخصوصية">Privacy Policy</a>
+                    </label>
+                    <button type="submit" class="btn-primary btn-full" data-en="Create Account" data-ar="إنشاء حساب">Create Account</button>
+                </form>
+
+                <div class="auth-divider"><span data-en="OR" data-ar="أو">OR</span></div>
+
+                <button class="btn-social btn-google">
+                    <svg width="18" height="18" viewBox="0 0 18 18">
+                        <path fill="#4285F4" d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.874 2.684-6.615z"/>
+                        <path fill="#34A853" d="M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332C2.438 15.983 5.482 18 9 18z"/>
+                        <path fill="#FBBC05" d="M3.964 10.71c-.18-.54-.282-1.117-.282-1.71s.102-1.17.282-1.71V4.958H.957C.347 6.173 0 7.548 0 9s.348 2.827.957 4.042l3.007-2.332z"/>
+                        <path fill="#EA4335" d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0 5.482 0 2.438 2.017.957 4.958L3.964 7.29C4.672 5.163 6.656 3.58 9 3.58z"/>
+                    </svg>
+                    <span data-en="Continue with Google" data-ar="المتابعة مع Google">Continue with Google</span>
+                </button>
+
+                <p class="auth-footer">
+                    <span data-en="Already have an account?" data-ar="لديك حساب بالفعل؟">Already have an account?</span> <a href="#login" data-en="Log in" data-ar="سجل الدخول">Log in</a>
+                </p>
+            </div>
+        </div>
+    </section>
+</div>
+
+<!-- ════════════════════════════════════════════
+     PAGE: DASHBOARD
+     hash: #dashboard
+═════════════════════════════════════════════ -->
+<div class="page page-dashboard" data-page="dashboard">
+    <nav class="navbar navbar-dashboard">
+        <div class="container">
+            <div class="nav-wrapper">
+                <div class="logo"><h1>Uni<span>Xchange</span></h1></div>
+                <ul class="nav-links">
+                    <li><a href="#dashboard" class="active" data-en="Browse Skills" data-ar="تصفح المهارات">Browse Skills</a></li>
+                    <li>
+                        <button class="language-toggle lang-toggle-btn">
+                            <span class="lang-icon">🌐</span>
+                            <span data-en="العربية" data-ar="English">العربية</span>
+                        </button>
+                    </li>
+                    <li><a href="#" class="user-profile">
+                        <div class="avatar">أح</div>
+                        <span>أحمد علي</span>
+                    </a></li>
+                    <li><a href="#" id="logoutBtn" class="btn-secondary" data-en="Logout" data-ar="تسجيل الخروج">Logout</a></li>
+                </ul>
+                <div class="hamburger"><span></span><span></span><span></span></div>
+            </div>
+        </div>
+    </nav>
+
+    <section class="dashboard">
+        <div class="container">
+            <div class="dashboard-header">
+                <div>
+                    <h1 data-en="Welcome back, Ahmed! 👋" data-ar="مرحباً بعودتك، أحمد! 👋">Welcome back, Ahmed! 👋</h1>
+                    <p data-en="Discover new skills to learn and share your expertise" data-ar="اكتشف مهارات جديدة للتعلم وشارك خبرتك">Discover new skills to learn and share your expertise</p>
+                </div>
+                <button class="btn-primary" id="addSkillBtn" data-en="+ Add Your Skills" data-ar="+ أضف مهاراتك">+ Add Your Skills</button>
+            </div>
+
+            <div class="search-section">
+                <div class="search-bar">
+                    <input type="text" data-placeholder-en="Search for skills, students, or universities..." data-placeholder-ar="ابحث عن مهارات، طلاب، أو جامعات..." placeholder="Search for skills, students, or universities...">
+                    <button class="btn-primary" data-en="Search" data-ar="بحث">Search</button>
+                </div>
+                <div class="filter-tags">
+                    <button class="filter-tag active" data-en="All" data-ar="الكل">All</button>
+                    <button class="filter-tag" data-en="Free" data-ar="مجاني">Free</button>
+                    <button class="filter-tag" data-en="Paid" data-ar="مدفوع">Paid</button>
+                    <button class="filter-tag" data-en="Programming" data-ar="البرمجة">Programming</button>
+                    <button class="filter-tag" data-en="Design" data-ar="التصميم">Design</button>
+                    <button class="filter-tag" data-en="Business" data-ar="الأعمال">Business</button>
+                    <button class="filter-tag" data-en="Languages" data-ar="اللغات">Languages</button>
+                    <button class="filter-tag" data-en="Science" data-ar="العلوم">Science</button>
+                </div>
+            </div>
+
+            <div class="skills-grid">
+                <!-- Skills loaded dynamically from Supabase -->
+            </div>
+        </div>
+    </section>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════════════════════
+// SUPABASE CONFIG + REST HELPER
+// ═══════════════════════════════════════════════════════════════════════
+const SUPABASE_URL = 'https://vyaverbmrzwsghqjdsdl.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ5YXZlcmJtcnp3c2docWpkc2RsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgyMjczODUsImV4cCI6MjA5MzgwMzM4NX0.xTW7_miV1X-s6qX3a21bskepUxMD05iYecDo7I4z8eU';
+const REST_URL = `${SUPABASE_URL}/rest/v1`;
+
+const baseHeaders = {
+    'apikey': SUPABASE_ANON_KEY,
+    'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+    'Content-Type': 'application/json'
+};
+
+const db = {
+    async select(table, query = '?select=*') {
+        const res = await fetch(`${REST_URL}/${table}${query}`, { method: 'GET', headers: baseHeaders });
+        if (!res.ok) throw new Error(`SELECT failed: ${res.status} ${await res.text()}`);
+        return res.json();
+    },
+    async insert(table, data) {
+        const res = await fetch(`${REST_URL}/${table}`, {
+            method: 'POST',
+            headers: { ...baseHeaders, 'Prefer': 'return=representation' },
+            body: JSON.stringify(data)
+        });
+        if (!res.ok) throw new Error(`INSERT failed: ${res.status} ${await res.text()}`);
+        return res.json();
+    },
+    async update(table, query, data) {
+        const res = await fetch(`${REST_URL}/${table}${query}`, {
+            method: 'PATCH',
+            headers: { ...baseHeaders, 'Prefer': 'return=representation' },
+            body: JSON.stringify(data)
+        });
+        if (!res.ok) throw new Error(`UPDATE failed: ${res.status} ${await res.text()}`);
+        return res.json();
+    },
+    async delete(table, query) {
+        const res = await fetch(`${REST_URL}/${table}${query}`, {
+            method: 'DELETE',
+            headers: { ...baseHeaders, 'Prefer': 'return=representation' }
+        });
+        if (!res.ok) throw new Error(`DELETE failed: ${res.status} ${await res.text()}`);
+        return res.json();
+    }
+};
+
+const session = {
+    save(user) {
+        localStorage.setItem('userLoggedIn', 'true');
+        localStorage.setItem('userId', user.id);
+        localStorage.setItem('userEmail', user.email);
+        localStorage.setItem('userName', `${user.first_name} ${user.last_name}`);
+        localStorage.setItem('userUniversity', user.university);
+        localStorage.setItem('userAvatar', user.avatar_initials || (user.first_name?.[0] || '') + (user.last_name?.[0] || ''));
+    },
+    get() {
+        if (localStorage.getItem('userLoggedIn') !== 'true') return null;
+        return {
+            id: parseInt(localStorage.getItem('userId')),
+            email: localStorage.getItem('userEmail'),
+            name: localStorage.getItem('userName'),
+            university: localStorage.getItem('userUniversity'),
+            avatar: localStorage.getItem('userAvatar')
+        };
+    },
+    clear() {
+        ['userLoggedIn','userId','userEmail','userName','userUniversity','userAvatar'].forEach(k => localStorage.removeItem(k));
+    }
+};
+
+// ═══════════════════════════════════════════════════════════════════════
+// LANGUAGE / TRANSLATION
+// ═══════════════════════════════════════════════════════════════════════
+let currentLanguage = localStorage.getItem('language') || 'en';
+
+function applyLanguage(lang) {
+    if (lang === 'ar') {
+        document.body.classList.add('rtl');
+        document.documentElement.setAttribute('dir', 'rtl');
+        document.documentElement.setAttribute('lang', 'ar');
+    } else {
+        document.body.classList.remove('rtl');
+        document.documentElement.setAttribute('dir', 'ltr');
+        document.documentElement.setAttribute('lang', 'en');
+    }
+    document.querySelectorAll('[data-en][data-ar]').forEach(el => {
+        const text = el.getAttribute(`data-${lang}`);
+        if (text) el.textContent = text;
+    });
+    document.querySelectorAll('[data-placeholder-en][data-placeholder-ar]').forEach(input => {
+        const placeholder = input.getAttribute(`data-placeholder-${lang}`);
+        if (placeholder) input.setAttribute('placeholder', placeholder);
+    });
+}
+
+// ═══════════════════════════════════════════════════════════════════════
+// NOTIFICATION SYSTEM
+// ═══════════════════════════════════════════════════════════════════════
+function showNotification(message, type = 'info') {
+    const existing = document.querySelector('.notification');
+    if (existing) existing.remove();
+
+    const n = document.createElement('div');
+    n.className = `notification notification-${type}`;
+    n.textContent = message;
+    n.style.cssText = `
+        position: fixed; top: 20px; right: 20px; padding: 1rem 1.5rem;
+        background: white; border-radius: 12px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        z-index: 10000; font-weight: 500;
+        animation: slideIn 0.3s ease-out;
+        max-width: 480px; border-left: 4px solid;
+        word-wrap: break-word; overflow-wrap: break-word;
+    `;
+    if (type === 'success') { n.style.borderLeftColor = '#10b981'; n.style.color = '#10b981'; }
+    else if (type === 'error') { n.style.borderLeftColor = '#ef4444'; n.style.color = '#ef4444'; }
+    else { n.style.borderLeftColor = '#6366f1'; n.style.color = '#6366f1'; }
+
+    if (!document.getElementById('notif-anim-style')) {
+        const s = document.createElement('style');
+        s.id = 'notif-anim-style';
+        s.textContent = `
+            @keyframes slideIn { from { transform: translateX(400px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+            @keyframes slideOut { from { transform: translateX(0); opacity: 1; } to { transform: translateX(400px); opacity: 0; } }
+        `;
+        document.head.appendChild(s);
+    }
+    document.body.appendChild(n);
+    setTimeout(() => {
+        n.style.animation = 'slideOut 0.3s ease-out';
+        setTimeout(() => n.remove(), 300);
+    }, 4000);
+}
+
+// ═══════════════════════════════════════════════════════════════════════
+// EMAIL VALIDATION
+// ═══════════════════════════════════════════════════════════════════════
+function isValidEmail(email) {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) return false;
+    // Accept: .edu, .edu.xx (e.g. .edu.sa), .ac.xx (e.g. .ac.uk), or 'university'/'college' in domain
+    const lower = email.toLowerCase();
+    return /\.edu(\.[a-z]{2,3})?(\b|$)/.test(lower)
+        || /\.ac\.[a-z]{2,3}(\b|$)/.test(lower)
+        || lower.includes('university')
+        || lower.includes('college');
+}
+
+// ═══════════════════════════════════════════════════════════════════════
+// SPA ROUTER — show one page at a time based on location.hash
+// ═══════════════════════════════════════════════════════════════════════
+const PAGES = ['home', 'login', 'signup', 'dashboard'];
+
+function navigate() {
+    const hash = (location.hash || '#home').replace('#', '');
+
+    // If the hash is one of our top-level page names, switch pages.
+    // If it's something else (e.g. #features-section for in-page anchor),
+    // leave the current page active and just scroll to the element.
+    let target = PAGES.includes(hash) ? hash : null;
+
+    // Auth guards
+    const me = session.get();
+    if (target === 'dashboard' && !me) {
+        showNotification(currentLanguage === 'ar' ? 'يرجى تسجيل الدخول أولاً' : 'Please log in first', 'error');
+        location.hash = '#login';
+        return;
+    }
+    if ((target === 'login' || target === 'signup') && me) {
+        location.hash = '#dashboard';
+        return;
+    }
+
+    if (target) {
+        // Switch active page
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+        const pageEl = document.querySelector(`.page-${target}`);
+        if (pageEl) pageEl.classList.add('active');
+        window.scrollTo(0, 0);
+
+        // Per-page setup
+        if (target === 'dashboard') initDashboard();
+    } else {
+        // In-page anchor — scroll smoothly
+        const el = document.getElementById(hash);
+        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+}
+
+window.addEventListener('hashchange', navigate);
+
+// ═══════════════════════════════════════════════════════════════════════
+// LANGUAGE TOGGLE BUTTONS (one per page navbar)
+// ═══════════════════════════════════════════════════════════════════════
+document.addEventListener('click', (e) => {
+    const btn = e.target.closest('.lang-toggle-btn');
+    if (!btn) return;
+    currentLanguage = currentLanguage === 'en' ? 'ar' : 'en';
+    localStorage.setItem('language', currentLanguage);
+    applyLanguage(currentLanguage);
+    showNotification(
+        currentLanguage === 'ar' ? 'تم تغيير اللغة إلى العربية' : 'Language changed to English',
+        'success'
+    );
+    // re-render skills if we're on dashboard so card text follows the language
+    if (document.querySelector('.page-dashboard.active')) renderSkills();
+});
+
+// ═══════════════════════════════════════════════════════════════════════
+// PASSWORD SHOW/HIDE TOGGLE
+// ═══════════════════════════════════════════════════════════════════════
+document.addEventListener('click', (e) => {
+    const toggle = e.target.closest('.password-toggle');
+    if (!toggle) return;
+    const targetId = toggle.dataset.target;
+    const input = document.getElementById(targetId);
+    if (!input) return;
+    if (input.type === 'password') {
+        input.type = 'text';
+        toggle.textContent = '🙈';
+    } else {
+        input.type = 'password';
+        toggle.textContent = '👁';
+    }
+});
+
+// ═══════════════════════════════════════════════════════════════════════
+// MOBILE NAV (hamburger)
+// ═══════════════════════════════════════════════════════════════════════
+document.addEventListener('click', (e) => {
+    const burger = e.target.closest('.hamburger');
+    if (burger) {
+        const links = burger.parentElement.querySelector('.nav-links');
+        if (links) links.classList.toggle('active');
+        burger.classList.toggle('active');
+        return;
+    }
+    // close any open menu when clicking outside
+    document.querySelectorAll('.nav-links.active').forEach(menu => {
+        if (!e.target.closest('.nav-wrapper')) {
+            menu.classList.remove('active');
+            const h = menu.parentElement.querySelector('.hamburger');
+            if (h) h.classList.remove('active');
+        }
+    });
+});
+
+// ═══════════════════════════════════════════════════════════════════════
+// LOGIN
+// ═══════════════════════════════════════════════════════════════════════
+document.getElementById('loginForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const email = document.getElementById('loginEmail').value.trim();
+    const password = document.getElementById('loginPassword').value;
+
+    if (!email || !password) { showNotification(currentLanguage === 'ar' ? 'يرجى ملء جميع الحقول' : 'Please fill in all fields', 'error'); return; }
+    if (!isValidEmail(email)) { showNotification(currentLanguage === 'ar' ? 'يرجى إدخال بريد جامعي صالح' : 'Please enter a valid university email', 'error'); return; }
+
+    showNotification(currentLanguage === 'ar' ? 'جاري تسجيل الدخول...' : 'Logging in...', 'info');
+    try {
+        const rows = await db.select('users', `?email=eq.${encodeURIComponent(email)}&password=eq.${encodeURIComponent(password)}&select=*`);
+        if (!rows || rows.length === 0) {
+            showNotification(currentLanguage === 'ar' ? 'بريد إلكتروني أو كلمة مرور غير صحيحة' : 'Invalid email or password', 'error');
+            return;
+        }
+        session.save(rows[0]);
+        showNotification(currentLanguage === 'ar' ? 'تم تسجيل الدخول!' : 'Login successful!', 'success');
+        setTimeout(() => { location.hash = '#dashboard'; }, 600);
+    } catch (err) {
+        console.error('Login error:', err);
+        showNotification('Login failed: ' + (err.message || 'connection error'), 'error');
+    }
+});
+
+// ═══════════════════════════════════════════════════════════════════════
+// SIGNUP
+// ═══════════════════════════════════════════════════════════════════════
+document.getElementById('signupForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const firstName = document.getElementById('firstName').value.trim();
+    const lastName = document.getElementById('lastName').value.trim();
+    const university = document.getElementById('university').value.trim();
+    const email = document.getElementById('signupEmail').value.trim();
+    const password = document.getElementById('signupPassword').value;
+    const confirmPassword = document.getElementById('confirmPassword').value;
+
+    if (!firstName || !lastName || !university || !email || !password || !confirmPassword) {
+        showNotification(currentLanguage === 'ar' ? 'يرجى ملء جميع الحقول' : 'Please fill in all fields', 'error'); return;
+    }
+    if (!isValidEmail(email)) {
+        showNotification(currentLanguage === 'ar' ? 'يرجى إدخال بريد جامعي صالح' : 'Please enter a valid university email (.edu or .ac)', 'error'); return;
+    }
+    if (password.length < 8) {
+        showNotification(currentLanguage === 'ar' ? 'يجب أن تكون كلمة المرور 8 أحرف على الأقل' : 'Password must be at least 8 characters', 'error'); return;
+    }
+    if (password !== confirmPassword) {
+        showNotification(currentLanguage === 'ar' ? 'كلمات المرور غير متطابقة' : 'Passwords do not match', 'error'); return;
+    }
+
+    showNotification(currentLanguage === 'ar' ? 'جاري إنشاء الحساب...' : 'Creating your account...', 'info');
+    try {
+        const existing = await db.select('users', `?email=eq.${encodeURIComponent(email)}&select=id`);
+        if (existing.length > 0) {
+            showNotification(currentLanguage === 'ar' ? 'البريد الإلكتروني مسجل بالفعل' : 'Email already registered', 'error');
+            return;
+        }
+        const initials = (firstName[0] || '') + (lastName[0] || '');
+        const inserted = await db.insert('users', {
+            first_name: firstName, last_name: lastName, university,
+            email, password, avatar_initials: initials
+        });
+        session.save(inserted[0]);
+        showNotification(currentLanguage === 'ar' ? 'تم إنشاء الحساب!' : 'Account created!', 'success');
+        setTimeout(() => { location.hash = '#dashboard'; }, 600);
+    } catch (err) {
+        console.error('Signup error:', err);
+        showNotification('Signup failed: ' + (err.message || 'connection error'), 'error');
+    }
+});
+
+// ═══════════════════════════════════════════════════════════════════════
+// LOGOUT
+// ═══════════════════════════════════════════════════════════════════════
+document.getElementById('logoutBtn').addEventListener('click', (e) => {
+    e.preventDefault();
+    session.clear();
+    showNotification(currentLanguage === 'ar' ? 'تم تسجيل الخروج' : 'Logged out', 'success');
+    setTimeout(() => { location.hash = '#home'; }, 400);
+});
+
+// ═══════════════════════════════════════════════════════════════════════
+// DASHBOARD: load skills, filter, search, CRUD
+// ═══════════════════════════════════════════════════════════════════════
+let allSkills = [];
+let currentFilter = 'all';
+let currentSearch = '';
+let dashboardInitialized = false;
+
+function initDashboard() {
+    const me = session.get();
+    if (!me) return;
+
+    // Update navbar greeting + avatar with the real user
+    const userNameSpan = document.querySelector('.page-dashboard .user-profile span');
+    const userAvatar = document.querySelector('.page-dashboard .user-profile .avatar');
+    const welcomeMessage = document.querySelector('.page-dashboard .dashboard-header h1');
+
+    if (userNameSpan) userNameSpan.textContent = me.name;
+    if (userAvatar) userAvatar.textContent = (me.avatar || me.name.substring(0,2)).toUpperCase();
+    if (welcomeMessage) {
+        const firstName = me.name.split(' ')[0];
+        welcomeMessage.textContent = currentLanguage === 'ar'
+            ? `مرحباً بعودتك، ${firstName}! 👋`
+            : `Welcome back, ${firstName}! 👋`;
+    }
+
+    // Wire dashboard event handlers once
+    if (!dashboardInitialized) {
+        wireDashboardEvents();
+        dashboardInitialized = true;
+    }
+
+    loadSkills();
+}
+
+async function loadSkills() {
+    const grid = document.querySelector('.page-dashboard .skills-grid');
+    if (!grid) return;
+    grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:3rem;color:#6b7280;">
+        ${currentLanguage === 'ar' ? 'جاري تحميل المهارات...' : 'Loading skills...'}
+    </div>`;
+    try {
+        const skills = await db.select('skills', '?select=*,users(id,first_name,last_name,university,avatar_initials)&order=created_at.desc');
+        allSkills = skills;
+        renderSkills();
+    } catch (err) {
+        console.error(err);
+        grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:3rem;color:#ef4444;">
+            ${currentLanguage === 'ar' ? 'فشل تحميل المهارات' : 'Failed to load skills'}
+        </div>`;
+    }
+}
+
+function escapeHTML(str) {
+    if (str === null || str === undefined) return '';
+    return String(str).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+function skillCardHTML(skill, me) {
+    const user = skill.users || {};
+    const fullName = `${user.first_name || ''} ${user.last_name || ''}`.trim() || 'Unknown';
+    const uni = user.university || '';
+    const avatar = user.avatar_initials || fullName.substring(0,2);
+    const isOwner = me && me.id === skill.user_id;
+
+    const priceLabel = skill.price_type === 'free'
+        ? (currentLanguage === 'ar' ? 'مجاني' : 'Free')
+        : `$${skill.price || 0}/hr`;
+    const statusLabel = skill.status === 'available'
+        ? (currentLanguage === 'ar' ? 'متاح' : 'Available')
+        : (currentLanguage === 'ar' ? 'مشغول' : 'Busy');
+    const tagsHTML = (skill.tags || []).map(t => `<span class="tag">${escapeHTML(t)}</span>`).join('');
+    const seekingLabel = currentLanguage === 'ar' ? 'يبحث عن:' : 'Seeking:';
+    const offeringLabel = currentLanguage === 'ar' ? 'يقدم:' : 'Offering:';
+
+    const ownerActions = isOwner ? `
+        <button class="btn-secondary skill-edit-btn" data-id="${skill.id}" style="margin-${currentLanguage === 'ar' ? 'left' : 'right'}:0.5rem;">
+            ${currentLanguage === 'ar' ? 'تعديل' : 'Edit'}
+        </button>
+        <button class="btn-secondary skill-delete-btn" data-id="${skill.id}" style="background:#fee2e2;color:#ef4444;border-color:#fecaca;">
+            ${currentLanguage === 'ar' ? 'حذف' : 'Delete'}
+        </button>
+    ` : `
+        <button class="btn-primary skill-connect-btn" data-id="${skill.id}" data-to="${skill.user_id}" data-name="${escapeHTML(fullName)}">
+            ${currentLanguage === 'ar' ? 'تواصل' : 'Connect'}
+        </button>
+    `;
+
+    return `
+        <div class="skill-card" data-price="${skill.price_type}" data-id="${skill.id}">
+            <div class="skill-card-header">
+                <div class="user-info">
+                    <div class="avatar">${escapeHTML(avatar)}</div>
+                    <div>
+                        <h3>${escapeHTML(fullName)}</h3>
+                        <p class="university">${escapeHTML(uni)}</p>
+                    </div>
+                </div>
+                <div class="badges">
+                    <span class="status-badge available">${statusLabel}</span>
+                    <span class="price-badge ${skill.price_type}">${priceLabel}</span>
+                </div>
+            </div>
+            <div class="skill-card-body">
+                <h4>${offeringLabel} ${escapeHTML(skill.title)}</h4>
+                <p>${escapeHTML(skill.description)}</p>
+                <div class="skill-tags">${tagsHTML}</div>
+            </div>
+            <div class="skill-card-footer">
+                <span class="seeking">${skill.seeking ? `${seekingLabel} ${escapeHTML(skill.seeking)}` : ''}</span>
+                <div style="display:flex;align-items:center;">${ownerActions}</div>
+            </div>
+        </div>
+    `;
+}
+
+function renderSkills() {
+    const grid = document.querySelector('.page-dashboard .skills-grid');
+    if (!grid) return;
+    let filtered = allSkills.slice();
+
+    if (currentFilter === 'free') filtered = filtered.filter(s => s.price_type === 'free');
+    else if (currentFilter === 'paid') filtered = filtered.filter(s => s.price_type === 'paid');
+    else if (currentFilter !== 'all') filtered = filtered.filter(s => (s.category || '').toLowerCase() === currentFilter);
+
+    if (currentSearch) {
+        const q = currentSearch.toLowerCase();
+        filtered = filtered.filter(s => {
+            const name = s.users ? `${s.users.first_name} ${s.users.last_name}` : '';
+            const uni = s.users ? s.users.university : '';
+            return (s.title || '').toLowerCase().includes(q)
+                || (s.description || '').toLowerCase().includes(q)
+                || (s.seeking || '').toLowerCase().includes(q)
+                || name.toLowerCase().includes(q)
+                || uni.toLowerCase().includes(q)
+                || (s.tags || []).some(t => t.toLowerCase().includes(q));
+        });
+    }
+
+    if (filtered.length === 0) {
+        grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:3rem;color:#6b7280;">
+            ${currentLanguage === 'ar' ? 'لا توجد مهارات مطابقة. كن أول من يضيف!' : 'No matching skills. Be the first to add one!'}
+        </div>`;
+        return;
+    }
+
+    const me = session.get();
+    grid.innerHTML = filtered.map(s => skillCardHTML(s, me)).join('');
+    attachSkillCardEvents();
+}
+
+function attachSkillCardEvents() {
+    document.querySelectorAll('.skill-connect-btn').forEach(btn => {
+        btn.addEventListener('click', async () => {
+            const me = session.get();
+            if (!me) { showNotification(currentLanguage === 'ar' ? 'يرجى تسجيل الدخول أولاً' : 'Please log in first', 'error'); return; }
+            const skillId = parseInt(btn.dataset.id);
+            const toUserId = parseInt(btn.dataset.to);
+            const targetName = btn.dataset.name;
+            btn.disabled = true;
+            try {
+                await db.insert('connections', {
+                    from_user_id: me.id, to_user_id: toUserId, skill_id: skillId,
+                    status: 'pending', message: 'Hi, I would like to connect!'
+                });
+                showNotification(
+                    currentLanguage === 'ar' ? `تم إرسال طلب الاتصال إلى ${targetName}!` : `Connection request sent to ${targetName}!`,
+                    'success'
+                );
+                btn.textContent = currentLanguage === 'ar' ? 'تم الإرسال' : 'Request Sent';
+                btn.classList.remove('btn-primary');
+                btn.classList.add('btn-secondary');
+            } catch (err) {
+                console.error(err);
+                btn.disabled = false;
+                showNotification(currentLanguage === 'ar' ? 'فشل إرسال الطلب' : 'Failed to send request', 'error');
+            }
+        });
+    });
+
+    document.querySelectorAll('.skill-delete-btn').forEach(btn => {
+        btn.addEventListener('click', async () => {
+            if (!confirm(currentLanguage === 'ar' ? 'هل أنت متأكد من حذف هذه المهارة؟' : 'Delete this skill?')) return;
+            const skillId = parseInt(btn.dataset.id);
+            try {
+                await db.delete('skills', `?id=eq.${skillId}`);
+                showNotification(currentLanguage === 'ar' ? 'تم حذف المهارة' : 'Skill deleted', 'success');
+                allSkills = allSkills.filter(s => s.id !== skillId);
+                renderSkills();
+            } catch (err) {
+                console.error(err);
+                showNotification(currentLanguage === 'ar' ? 'فشل حذف المهارة' : 'Failed to delete skill', 'error');
+            }
+        });
+    });
+
+    document.querySelectorAll('.skill-edit-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const skillId = parseInt(btn.dataset.id);
+            const skill = allSkills.find(s => s.id === skillId);
+            if (skill) openSkillModal(skill);
+        });
+    });
+}
+
+function wireDashboardEvents() {
+    // Filter tags
+    document.querySelectorAll('.page-dashboard .filter-tag').forEach(tag => {
+        tag.addEventListener('click', () => {
+            document.querySelectorAll('.page-dashboard .filter-tag').forEach(t => t.classList.remove('active'));
+            tag.classList.add('active');
+            currentFilter = (tag.getAttribute('data-en') || '').toLowerCase();
+            renderSkills();
+        });
+    });
+
+    // Search
+    const searchInput = document.querySelector('.page-dashboard .search-bar input');
+    const searchButton = document.querySelector('.page-dashboard .search-bar .btn-primary');
+    if (searchInput && searchButton) {
+        const doSearch = () => {
+            currentSearch = searchInput.value.trim();
+            renderSkills();
+        };
+        searchButton.addEventListener('click', doSearch);
+        searchInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') doSearch(); });
+        searchInput.addEventListener('input', () => {
+            currentSearch = searchInput.value.trim();
+            renderSkills();
+        });
+    }
+
+    // Add skill button
+    const addBtn = document.getElementById('addSkillBtn');
+    if (addBtn) addBtn.addEventListener('click', () => openSkillModal());
+}
+
+// ═══════════════════════════════════════════════════════════════════════
+// SKILL MODAL (add/edit)
+// ═══════════════════════════════════════════════════════════════════════
+function buildSkillModal() {
+    if (document.getElementById('skillModal')) return;
+
+    const modal = document.createElement('div');
+    modal.id = 'skillModal';
+    modal.style.cssText = `
+        position: fixed; inset: 0; background: rgba(0,0,0,0.5);
+        display: none; align-items: center; justify-content: center;
+        z-index: 9999; backdrop-filter: blur(4px); padding: 1rem;
+    `;
+    modal.innerHTML = `
+        <div style="background:white;border-radius:16px;padding:2rem;max-width:500px;width:100%;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.3);">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;">
+                <h2 id="skillModalTitle" style="margin:0;color:#1f2937;font-size:1.5rem;">Post a Skill</h2>
+                <button id="closeSkillModal" type="button" style="background:none;border:none;font-size:1.5rem;cursor:pointer;color:#6b7280;">&times;</button>
+            </div>
+            <form id="skillForm" style="display:flex;flex-direction:column;gap:1rem;">
+                <input type="hidden" id="skillIdInput">
+                <div>
+                    <label style="display:block;font-weight:500;margin-bottom:0.4rem;color:#374151;">Title</label>
+                    <input type="text" id="skillTitle" required style="width:100%;padding:0.7rem 1rem;border:1px solid #e5e7eb;border-radius:10px;font-size:1rem;">
+                </div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;">
+                    <div>
+                        <label style="display:block;font-weight:500;margin-bottom:0.4rem;color:#374151;">Category</label>
+                        <select id="skillCategory" style="width:100%;padding:0.7rem 1rem;border:1px solid #e5e7eb;border-radius:10px;font-size:1rem;background:white;">
+                            <option value="programming">Programming</option>
+                            <option value="design">Design</option>
+                            <option value="business">Business</option>
+                            <option value="languages">Languages</option>
+                            <option value="science">Science</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label style="display:block;font-weight:500;margin-bottom:0.4rem;color:#374151;">Type</label>
+                        <select id="skillPriceType" style="width:100%;padding:0.7rem 1rem;border:1px solid #e5e7eb;border-radius:10px;font-size:1rem;background:white;">
+                            <option value="free">Free</option>
+                            <option value="paid">Paid</option>
+                        </select>
+                    </div>
+                </div>
+                <div id="priceInputWrapper" style="display:none;">
+                    <label style="display:block;font-weight:500;margin-bottom:0.4rem;color:#374151;">Price ($/hr)</label>
+                    <input type="number" id="skillPrice" min="0" step="1" style="width:100%;padding:0.7rem 1rem;border:1px solid #e5e7eb;border-radius:10px;font-size:1rem;">
+                </div>
+                <div>
+                    <label style="display:block;font-weight:500;margin-bottom:0.4rem;color:#374151;">Description</label>
+                    <textarea id="skillDescription" required rows="3" style="width:100%;padding:0.7rem 1rem;border:1px solid #e5e7eb;border-radius:10px;font-size:1rem;font-family:inherit;resize:vertical;"></textarea>
+                </div>
+                <div>
+                    <label style="display:block;font-weight:500;margin-bottom:0.4rem;color:#374151;">Tags (comma-separated)</label>
+                    <input type="text" id="skillTags" placeholder="Python, AI, Web" style="width:100%;padding:0.7rem 1rem;border:1px solid #e5e7eb;border-radius:10px;font-size:1rem;">
+                </div>
+                <div>
+                    <label style="display:block;font-weight:500;margin-bottom:0.4rem;color:#374151;">Looking for (optional)</label>
+                    <input type="text" id="skillSeeking" placeholder="UI/UX Design" style="width:100%;padding:0.7rem 1rem;border:1px solid #e5e7eb;border-radius:10px;font-size:1rem;">
+                </div>
+                <button type="submit" class="btn-primary btn-full" id="skillSubmitBtn">Publish</button>
+            </form>
+        </div>
+    `;
+    document.body.appendChild(modal);
+
+    const priceTypeSel = modal.querySelector('#skillPriceType');
+    const priceWrap = modal.querySelector('#priceInputWrapper');
+    priceTypeSel.addEventListener('change', () => {
+        priceWrap.style.display = priceTypeSel.value === 'paid' ? 'block' : 'none';
+    });
+
+    modal.querySelector('#closeSkillModal').addEventListener('click', closeSkillModal);
+    modal.addEventListener('click', (e) => { if (e.target === modal) closeSkillModal(); });
+
+    modal.querySelector('#skillForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const me = session.get();
+        if (!me) { showNotification('Please log in first', 'error'); return; }
+
+        const id = document.getElementById('skillIdInput').value;
+        const tagsRaw = document.getElementById('skillTags').value.trim();
+        const payload = {
+            title: document.getElementById('skillTitle').value.trim(),
+            description: document.getElementById('skillDescription').value.trim(),
+            category: document.getElementById('skillCategory').value,
+            price_type: document.getElementById('skillPriceType').value,
+            price: document.getElementById('skillPriceType').value === 'paid'
+                ? parseFloat(document.getElementById('skillPrice').value) || 0 : 0,
+            tags: tagsRaw ? tagsRaw.split(',').map(t => t.trim()).filter(Boolean) : [],
+            seeking: document.getElementById('skillSeeking').value.trim() || null
+        };
+
+        try {
+            if (id) {
+                await db.update('skills', `?id=eq.${id}`, payload);
+                showNotification(currentLanguage === 'ar' ? 'تم تحديث المهارة' : 'Skill updated', 'success');
+            } else {
+                payload.user_id = me.id;
+                payload.status = 'available';
+                await db.insert('skills', payload);
+                showNotification(currentLanguage === 'ar' ? 'تم نشر المهارة!' : 'Skill posted!', 'success');
+            }
+            closeSkillModal();
+            await loadSkills();
+        } catch (err) {
+            console.error(err);
+            showNotification(currentLanguage === 'ar' ? 'فشل الحفظ' : 'Failed to save', 'error');
+        }
+    });
+}
+
+function openSkillModal(skill = null) {
+    buildSkillModal();
+    const modal = document.getElementById('skillModal');
+    document.getElementById('skillIdInput').value = skill ? skill.id : '';
+    document.getElementById('skillTitle').value = skill ? skill.title : '';
+    document.getElementById('skillCategory').value = skill ? skill.category : 'programming';
+    document.getElementById('skillPriceType').value = skill ? skill.price_type : 'free';
+    document.getElementById('skillPrice').value = skill ? skill.price : '';
+    document.getElementById('skillDescription').value = skill ? skill.description : '';
+    document.getElementById('skillTags').value = skill && skill.tags ? skill.tags.join(', ') : '';
+    document.getElementById('skillSeeking').value = skill ? (skill.seeking || '') : '';
+    document.getElementById('priceInputWrapper').style.display =
+        (skill && skill.price_type === 'paid') ? 'block' : 'none';
+
+    document.getElementById('skillModalTitle').textContent = skill
+        ? (currentLanguage === 'ar' ? 'تعديل المهارة' : 'Edit Skill')
+        : (currentLanguage === 'ar' ? 'إضافة مهارة' : 'Post a Skill');
+    document.getElementById('skillSubmitBtn').textContent = skill
+        ? (currentLanguage === 'ar' ? 'حفظ التغييرات' : 'Save Changes')
+        : (currentLanguage === 'ar' ? 'نشر' : 'Publish');
+
+    modal.style.display = 'flex';
+}
+
+function closeSkillModal() {
+    const modal = document.getElementById('skillModal');
+    if (modal) modal.style.display = 'none';
+}
+
+// ═══════════════════════════════════════════════════════════════════════
+// BOOT
+// ═══════════════════════════════════════════════════════════════════════
+applyLanguage(currentLanguage);
+navigate(); // initial route based on current hash
+console.log('UniXchange (single-file Supabase build) ready ✓');
+</script>
+</body>
+</html>
